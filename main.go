@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"go-project/config"
 	"go-project/models"
@@ -17,9 +18,15 @@ func main() {
 		log.Println("No .env file found, using system env")
 	}
 
-	config.ConnectDB()	
+	config.ConnectDB()
 	config.DB.AutoMigrate(&models.User{}, &models.Post{})
 
 	r := routes.SetupRoutes()
-	r.Run(":8000")
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8000" // fallback buat local
+	}
+
+	r.Run(":" + port)
 }
